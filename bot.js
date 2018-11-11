@@ -20,7 +20,7 @@ const gif = require("gif-search");
 
 const client = new Discord.Client({disableEveryone: true});
 
-const prefix = "2";
+const prefix = "#";
 /////////////////////////
 ////////////////////////
 
@@ -313,7 +313,7 @@ function play(guild, song) {
 
 
 client.on('message', message => {
-    if (message.content === 'help') {
+    if (message.content === '#help') {
         let helpEmbed = new Discord.RichEmbed()
         .setTitle('**أوامر الميوزك...**')
         .setDescription('**برفكس البوت (!)**')
@@ -331,7 +331,7 @@ client.on('message', message => {
 });
 
 client.on('message', message => {
-    if (message.content === 'general_commands') {
+    if (message.content === '#general_commands') {
         let helpEmbed = new Discord.RichEmbed()
         .setTitle('**أوامر عامة...**')
         .addField('avatar', "افاتار الشخص المطلوب")
@@ -912,3 +912,57 @@ cclient.on('message', async msg => {
             return handleVideo(video, msg, voiceChannel);
             
         }
+
+		
+} else if (command === `s`) {
+
+		if (!msg.member.voiceChannel) return msg.channel.send("يجب ان تكون في روم صوتي");
+        if (!serverQueue) return msg.channel.send("ليست هناك اغاني ليتم التخطي");
+
+		serverQueue.connection.dispatcher.end('تم تخطي الاغنية');
+        return undefined;
+	
+} else if (command === `تخطي`) {
+
+		if (!msg.member.voiceChannel) return msg.channel.send("يجب ان تكون في روم صوتي");
+        if (!serverQueue) return msg.channel.send("ليست هناك اغاني ليتم التخطي");
+
+		serverQueue.connection.dispatcher.end('تم تخطي الاغنية');
+        return undefined;
+	
+	
+	
+} else if (command === `volume`) {
+
+		if (!msg.member.voiceChannel) return msg.channel.send("يجب ان تكون في روم صوتي");
+		if (!serverQueue) return msg.channel.send('يعمل الامر فقط عند تشغيل مقطع صوتي');
+        if (!args[1]) return msg.channel.send(`لقد تم تغير درجة الصوت الى**${serverQueue.volume}**`);
+        
+		serverQueue.volume = args[1];
+        serverQueue.connection.dispatcher.setVolumeLogarithmic(args[1] / 50);
+        
+        return msg.channel.send(`درجة الصوت الان**${args[1]}**`);
+	
+} else if (command === `v`) {
+
+		if (!msg.member.voiceChannel) return msg.channel.send("يجب ان تكون في روم صوتي");
+		if (!serverQueue) return msg.channel.send('يعمل الامر فقط عند تشغيل مقطع صوتي');
+        if (!args[1]) return msg.channel.send(`لقد تم تغير درجة الصوت الى**${serverQueue.volume}**`);
+        
+		serverQueue.volume = args[1];
+        serverQueue.connection.dispatcher.setVolumeLogarithmic(args[1] / 50);
+        
+        return msg.channel.send(`درجة الصوت الان**${args[1]}**`);
+	
+} else if (command === `صوت`) {
+
+		if (!msg.member.voiceChannel) return msg.channel.send("يجب ان تكون في روم صوتي");
+		if (!serverQueue) return msg.channel.send('يعمل الامر فقط عند تشغيل مقطع صوتي');
+        if (!args[1]) return msg.channel.send(`لقد تم تغير درجة الصوت الى**${serverQueue.volume}**`);
+        
+		serverQueue.volume = args[1];
+        serverQueue.connection.dispatcher.setVolumeLogarithmic(args[1] / 50);
+        
+        return msg.channel.send(`درجة الصوت الان**${args[1]}**`);
+	
+client.login(process.env.BOT_TOKEN);
