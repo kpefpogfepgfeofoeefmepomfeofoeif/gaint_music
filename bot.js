@@ -353,4 +353,562 @@ client.user.setGame(`1play | Last Music`,"http://twitch.tv/Death Shop")
 client.user.setStatus("dnd")
 });
 
-client.login(process.env.BOT_TOKEN);
+client.on('message', async msg => { 
+	if (msg.author.bot) return undefined;
+    if (!msg.content.startsWith(prefix)) return undefined;
+    
+    const args = msg.content.split(' ');
+	const searchString = args.slice(1).join(' ');
+    
+	const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
+	const serverQueue = queue.get(msg.guild.id);
+
+	let command = msg.content.toLowerCase().split(" ")[0];
+	command = command.slice(prefix.length)
+
+	if (command === `p`) {
+		const voiceChannel = msg.member.voiceChannel;
+        
+        if (!voiceChannel) return msg.channel.send("انت لم تدخل روم صوتي");
+        
+        const permissions = voiceChannel.permissionsFor(msg.client.user);
+        
+        if (!permissions.has('CONNECT')) {
+
+			return msg.channel.send("ليست لدي صلاحيات للدخول الى الروم");
+        }
+        
+		if (!permissions.has('SPEAK')) {
+
+			return msg.channel.send("انا لا يمكنني التكلم في هاذه الروم");
+		}
+
+		if (!permissions.has('EMBED_LINKS')) {
+
+			return msg.channel.sendMessage("انا لا املك صلاحيات ارسال روابط")
+		}
+
+		if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
+
+			const playlist = await youtube.getPlaylist(url);
+            const videos = await playlist.getVideos();
+            
+
+			for (const video of Object.values(videos)) {
+                
+                const video2 = await youtube.getVideoByID(video.id); 
+                await handleVideo(video2, msg, voiceChannel, true); 
+            }
+			return msg.channel.send(`**${playlist.title}**, Just added to the queue!`);
+		} else {
+
+			try {
+
+                var video = await youtube.getVideo(url);
+                
+			} catch (error) {
+				try {
+
+					var videos = await youtube.searchVideos(searchString, 5);
+					let index = 0;
+                    const embed1 = new Discord.RichEmbed()
+                    .setTitle(":mag_right:  YouTube Search Results :")
+                    .setDescription(`
+                    ${videos.map(video2 => `${++index}. **${video2.title}**`).join('\n')}`)
+                    
+					.setColor("#f7abab")
+					msg.channel.sendEmbed(embed1).then(message =>{message.delete(20000)})
+					
+/////////////////					
+					try {
+
+						var response = await msg.channel.awaitMessages(msg2 => msg2.content > 0 && msg2.content < 11, {
+							maxMatches: 1,
+							time: 15000,
+							errors: ['time']
+						});
+					} catch (err) {
+						console.error(err);
+						return msg.channel.send('لم يتم اختيار الاغنية');
+                    }
+                    
+					const videoIndex = parseInt(response.first().content);
+                    var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
+                    
+				} catch (err) {
+
+					console.error(err);
+					return msg.channel.send("I didn't find any results!");
+				}
+			}
+
+            return handleVideo(video, msg, voiceChannel);
+            
+        }
+
+
+	client.on('message', async msg => { 
+	if (msg.author.bot) return undefined;
+    if (!msg.content.startsWith(prefix)) return undefined;
+    
+    const args = msg.content.split(' ');
+	const searchString = args.slice(1).join(' ');
+    
+	const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
+	const serverQueue = queue.get(msg.guild.id);
+
+	let command = msg.content.toLowerCase().split(" ")[0];
+	command = command.slice(prefix.length)
+
+	if (command === `شغل`) {
+		const voiceChannel = msg.member.voiceChannel;
+        
+        if (!voiceChannel) return msg.channel.send("انت لم تدخل روم صوتي");
+        
+        const permissions = voiceChannel.permissionsFor(msg.client.user);
+        
+        if (!permissions.has('CONNECT')) {
+
+			return msg.channel.send("ليست لدي صلاحيات للدخول الى الروم");
+        }
+        
+		if (!permissions.has('SPEAK')) {
+
+			return msg.channel.send("انا لا يمكنني التكلم في هاذه الروم");
+		}
+
+		if (!permissions.has('EMBED_LINKS')) {
+
+			return msg.channel.sendMessage("انا لا املك صلاحيات ارسال روابط")
+		}
+
+		if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
+
+			const playlist = await youtube.getPlaylist(url);
+            const videos = await playlist.getVideos();
+            
+
+			for (const video of Object.values(videos)) {
+                
+                const video2 = await youtube.getVideoByID(video.id); 
+                await handleVideo(video2, msg, voiceChannel, true); 
+            }
+			return msg.channel.send(`**${playlist.title}**, Just added to the queue!`);
+		} else {
+
+			try {
+
+                var video = await youtube.getVideo(url);
+                
+			} catch (error) {
+				try {
+
+					var videos = await youtube.searchVideos(searchString, 5);
+					let index = 0;
+                    const embed1 = new Discord.RichEmbed()
+                    .setTitle(":mag_right:  YouTube Search Results :")
+                    .setDescription(`
+                    ${videos.map(video2 => `${++index}. **${video2.title}**`).join('\n')}`)
+                    
+					.setColor("#f7abab")
+					msg.channel.sendEmbed(embed1).then(message =>{message.delete(20000)})
+					
+/////////////////					
+					try {
+
+						var response = await msg.channel.awaitMessages(msg2 => msg2.content > 0 && msg2.content < 11, {
+							maxMatches: 1,
+							time: 15000,
+							errors: ['time']
+						});
+					} catch (err) {
+						console.error(err);
+						return msg.channel.send('لم يتم اختيار الاغنية');
+                    }
+                    
+					const videoIndex = parseInt(response.first().content);
+                    var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
+                    
+				} catch (err) {
+
+					console.error(err);
+					return msg.channel.send("I didn't find any results!");
+				}
+			}
+
+            return handleVideo(video, msg, voiceChannel);
+            
+        }	
+	
+	client.on('message', async msg => { 
+	if (msg.author.bot) return undefined;
+    if (!msg.content.startsWith(prefix)) return undefined;
+    
+    const args = msg.content.split(' ');
+	const searchString = args.slice(1).join(' ');
+    
+	const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
+	const serverQueue = queue.get(msg.guild.id);
+
+	let command = msg.content.toLowerCase().split(" ")[0];
+	command = command.slice(prefix.length)
+
+	if (command === `playe`) {
+		const voiceChannel = msg.member.voiceChannel;
+        
+        if (!voiceChannel) return msg.channel.send("انت لم تدخل روم صوتي");
+        
+        const permissions = voiceChannel.permissionsFor(msg.client.user);
+        
+        if (!permissions.has('CONNECT')) {
+
+			return msg.channel.send("ليست لدي صلاحيات للدخول الى الروم");
+        }
+        
+		if (!permissions.has('SPEAK')) {
+
+			return msg.channel.send("انا لا يمكنني التكلم في هاذه الروم");
+		}
+
+		if (!permissions.has('EMBED_LINKS')) {
+
+			return msg.channel.sendMessage("انا لا املك صلاحيات ارسال روابط")
+		}
+
+		if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
+
+			const playlist = await youtube.getPlaylist(url);
+            const videos = await playlist.getVideos();
+            
+
+			for (const video of Object.values(videos)) {
+                
+                const video2 = await youtube.getVideoByID(video.id); 
+                await handleVideo(video2, msg, voiceChannel, true); 
+            }
+			return msg.channel.send(`**${playlist.title}**, Just added to the queue!`);
+		} else {
+
+			try {
+
+                var video = await youtube.getVideo(url);
+                
+			} catch (error) {
+				try {
+
+					var videos = await youtube.searchVideos(searchString, 5);
+					let index = 0;
+                    const embed1 = new Discord.RichEmbed()
+                    .setTitle(":mag_right:  YouTube Search Results :")
+                    .setDescription(`
+                    ${videos.map(video2 => `${++index}. **${video2.title}**`).join('\n')}`)
+                    
+					.setColor("#f7abab")
+					msg.channel.sendEmbed(embed1).then(message =>{message.delete(20000)})
+					
+/////////////////					
+					try {
+
+						var response = await msg.channel.awaitMessages(msg2 => msg2.content > 0 && msg2.content < 11, {
+							maxMatches: 1,
+							time: 15000,
+							errors: ['time']
+						});
+					} catch (err) {
+						console.error(err);
+						return msg.channel.send('لم يتم اختيار الاغنية');
+                    }
+                    
+					const videoIndex = parseInt(response.first().content);
+                    var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
+                    
+				} catch (err) {
+
+					console.error(err);
+					return msg.channel.send("I didn't find any results!");
+				}
+			}
+
+            return handleVideo(video, msg, voiceChannel);
+            
+        }
+			
+client.on('message', async msg => { 
+	if (msg.author.bot) return undefined;
+    if (!msg.content.startsWith(prefix)) return undefined;
+    
+    const args = msg.content.split(' ');
+	const searchString = args.slice(1).join(' ');
+    
+	const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
+	const serverQueue = queue.get(msg.guild.id);
+
+	let command = msg.content.toLowerCase().split(" ")[0];
+	command = command.slice(prefix.length)
+
+	if (command === `pe`) {
+		const voiceChannel = msg.member.voiceChannel;
+        
+        if (!voiceChannel) return msg.channel.send("انت لم تدخل روم صوتي");
+        
+        const permissions = voiceChannel.permissionsFor(msg.client.user);
+        
+        if (!permissions.has('CONNECT')) {
+
+			return msg.channel.send("ليست لدي صلاحيات للدخول الى الروم");
+        }
+        
+		if (!permissions.has('SPEAK')) {
+
+			return msg.channel.send("انا لا يمكنني التكلم في هاذه الروم");
+		}
+
+		if (!permissions.has('EMBED_LINKS')) {
+
+			return msg.channel.sendMessage("انا لا املك صلاحيات ارسال روابط")
+		}
+
+		if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
+
+			const playlist = await youtube.getPlaylist(url);
+            const videos = await playlist.getVideos();
+            
+
+			for (const video of Object.values(videos)) {
+                
+                const video2 = await youtube.getVideoByID(video.id); 
+                await handleVideo(video2, msg, voiceChannel, true); 
+            }
+			return msg.channel.send(`**${playlist.title}**, Just added to the queue!`);
+		} else {
+
+			try {
+
+                var video = await youtube.getVideo(url);
+                
+			} catch (error) {
+				try {
+
+					var videos = await youtube.searchVideos(searchString, 5);
+					let index = 0;
+                    const embed1 = new Discord.RichEmbed()
+                    .setTitle(":mag_right:  YouTube Search Results :")
+                    .setDescription(`
+                    ${videos.map(video2 => `${++index}. **${video2.title}**`).join('\n')}`)
+                    
+					.setColor("#f7abab")
+					msg.channel.sendEmbed(embed1).then(message =>{message.delete(20000)})
+					
+/////////////////					
+					try {
+
+						var response = await msg.channel.awaitMessages(msg2 => msg2.content > 0 && msg2.content < 11, {
+							maxMatches: 1,
+							time: 15000,
+							errors: ['time']
+						});
+					} catch (err) {
+						console.error(err);
+						return msg.channel.send('لم يتم اختيار الاغنية');
+                    }
+                    
+					const videoIndex = parseInt(response.first().content);
+                    var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
+                    
+				} catch (err) {
+
+					console.error(err);
+					return msg.channel.send("I didn't find any results!");
+				}
+			}
+
+            return handleVideo(video, msg, voiceChannel);
+            
+        }
+		
+client.on('message', async msg => { 
+	if (msg.author.bot) return undefined;
+    if (!msg.content.startsWith(prefix)) return undefined;
+    
+    const args = msg.content.split(' ');
+	const searchString = args.slice(1).join(' ');
+    
+	const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
+	const serverQueue = queue.get(msg.guild.id);
+
+	let command = msg.content.toLowerCase().split(" ")[0];
+	command = command.slice(prefix.length)
+
+	if (command === `شغلي`) {
+		const voiceChannel = msg.member.voiceChannel;
+        
+        if (!voiceChannel) return msg.channel.send("انت لم تدخل روم صوتي");
+        
+        const permissions = voiceChannel.permissionsFor(msg.client.user);
+        
+        if (!permissions.has('CONNECT')) {
+
+			return msg.channel.send("ليست لدي صلاحيات للدخول الى الروم");
+        }
+        
+		if (!permissions.has('SPEAK')) {
+
+			return msg.channel.send("انا لا يمكنني التكلم في هاذه الروم");
+		}
+
+		if (!permissions.has('EMBED_LINKS')) {
+
+			return msg.channel.sendMessage("انا لا املك صلاحيات ارسال روابط")
+		}
+
+		if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
+
+			const playlist = await youtube.getPlaylist(url);
+            const videos = await playlist.getVideos();
+            
+
+			for (const video of Object.values(videos)) {
+                
+                const video2 = await youtube.getVideoByID(video.id); 
+                await handleVideo(video2, msg, voiceChannel, true); 
+            }
+			return msg.channel.send(`**${playlist.title}**, Just added to the queue!`);
+		} else {
+
+			try {
+
+                var video = await youtube.getVideo(url);
+                
+			} catch (error) {
+				try {
+
+					var videos = await youtube.searchVideos(searchString, 5);
+					let index = 0;
+                    const embed1 = new Discord.RichEmbed()
+                    .setTitle(":mag_right:  YouTube Search Results :")
+                    .setDescription(`
+                    ${videos.map(video2 => `${++index}. **${video2.title}**`).join('\n')}`)
+                    
+					.setColor("#f7abab")
+					msg.channel.sendEmbed(embed1).then(message =>{message.delete(20000)})
+					
+/////////////////					
+					try {
+
+						var response = await msg.channel.awaitMessages(msg2 => msg2.content > 0 && msg2.content < 11, {
+							maxMatches: 1,
+							time: 15000,
+							errors: ['time']
+						});
+					} catch (err) {
+						console.error(err);
+						return msg.channel.send('لم يتم اختيار الاغنية');
+                    }
+                    
+					const videoIndex = parseInt(response.first().content);
+                    var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
+                    
+				} catch (err) {
+
+					console.error(err);
+					return msg.channel.send("I didn't find any results!");
+				}
+			}
+
+            return handleVideo(video, msg, voiceChannel);
+            
+        }
+		
+		
+cclient.on('message', async msg => { 
+	if (msg.author.bot) return undefined;
+    if (!msg.content.startsWith(prefix)) return undefined;
+    
+    const args = msg.content.split(' ');
+	const searchString = args.slice(1).join(' ');
+    
+	const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
+	const serverQueue = queue.get(msg.guild.id);
+
+	let command = msg.content.toLowerCase().split(" ")[0];
+	command = command.slice(prefix.length)
+
+	if (command === `plajjdjdjdndy`) {
+		const voiceChannel = msg.member.voiceChannel;
+        
+        if (!voiceChannel) return msg.channel.send("انت لم تدخل روم صوتي");
+        
+        const permissions = voiceChannel.permissionsFor(msg.client.user);
+        
+        if (!permissions.has('CONNECT')) {
+
+			return msg.channel.send("ليست لدي صلاحيات للدخول الى الروم");
+        }
+        
+		if (!permissions.has('SPEAK')) {
+
+			return msg.channel.send("انا لا يمكنني التكلم في هاذه الروم");
+		}
+
+		if (!permissions.has('EMBED_LINKS')) {
+
+			return msg.channel.sendMessage("انا لا املك صلاحيات ارسال روابط")
+		}
+
+		if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
+
+			const playlist = await youtube.getPlaylist(url);
+            const videos = await playlist.getVideos();
+            
+
+			for (const video of Object.values(videos)) {
+                
+                const video2 = await youtube.getVideoByID(video.id); 
+                await handleVideo(video2, msg, voiceChannel, true); 
+            }
+			return msg.channel.send(`**${playlist.title}**, Just added to the queue!`);
+		} else {
+
+			try {
+
+                var video = await youtube.getVideo(url);
+                
+			} catch (error) {
+				try {
+
+					var videos = await youtube.searchVideos(searchString, 5);
+					let index = 0;
+                    const embed1 = new Discord.RichEmbed()
+                    .setTitle(":mag_right:  YouTube Search Results :")
+                    .setDescription(`
+                    ${videos.map(video2 => `${++index}. **${video2.title}**`).join('\n')}`)
+                    
+					.setColor("#f7abab")
+					msg.channel.sendEmbed(embed1).then(message =>{message.delete(20000)})
+					
+/////////////////					
+					try {
+
+						var response = await msg.channel.awaitMessages(msg2 => msg2.content > 0 && msg2.content < 11, {
+							maxMatches: 1,
+							time: 15000,
+							errors: ['time']
+						});
+					} catch (err) {
+						console.error(err);
+						return msg.channel.send('لم يتم اختيار الاغنية');
+                    }
+                    
+					const videoIndex = parseInt(response.first().content);
+                    var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
+                    
+				} catch (err) {
+
+					console.error(err);
+					return msg.channel.send("I didn't find any results!");
+				}
+			}
+
+            return handleVideo(video, msg, voiceChannel);
+            
+        }
